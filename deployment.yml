@@ -1,0 +1,45 @@
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: videostreamingservice
+spec:
+  selector:
+    app: video-streaming
+  ports:
+    - protocol: "TCP"
+      # Port accessible inside cluster
+      port: 8000
+      # Port to forward to inside the pod
+      targetPort: 3000
+      # Port accessible outside cluster
+      nodePort: 30002
+  type: LoadBalancer
+ 
+
+
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: video-streaming
+spec:
+  replicas: 5
+  selector:
+    matchLabels:
+      app: video-streaming
+  template:
+    metadata:
+      labels:
+        app: video-streaming
+    spec:
+      containers:
+        - name: video-streaming
+          image: localhost:5000/video-streaming
+          imagePullPolicy: Never
+          env:
+          - name: PORT
+            value: "3000"
+          ports:
+            - containerPort: 80

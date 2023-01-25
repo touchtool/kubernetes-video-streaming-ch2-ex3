@@ -1,0 +1,15 @@
+FROM node:12.18.1-alpine
+
+WORKDIR /usr/src/app
+
+COPY package*.json ./
+
+RUN npm install --only=production
+
+ENV PORT=3000
+
+COPY ./src ./
+
+COPY ./videos ./videos
+
+CMD [ "npm", "start" ]
